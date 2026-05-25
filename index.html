@@ -2,64 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utopia Gacha Test (Real Landscape)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Utopia Gacha Test (CSS Hack)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             background-color: #1a1a1a;
             color: white;
             font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden; /* Mencegah layar bisa di-scroll */
+        }
+
+        /* Ini kontainer utama yang menampung seluruh game kamu */
+        #game-container {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
         }
+
+        /* TRIK MAGIC CSS: Fake Landscape */
+        /* Jika layar HP terdeteksi tegak (Portrait), putar paksa isinya 90 derajat! */
+        @media screen and (orientation: portrait) {
+            #game-container {
+                /* Tukar dimensinya: Lebar mengambil tinggi layar, Tinggi mengambil lebar layar */
+                width: 100vh;
+                height: 100vw;
+                
+                /* Rumus ajaib untuk memusatkan ulang koordinat X dan Y agar tidak melenceng keluar layar */
+                top: calc(50vh - 50vw);
+                left: calc(50vw - 50vh);
+                
+                /* Putar tepat di titik tengahnya */
+                transform: rotate(90deg);
+                transform-origin: center center;
+            }
+        }
+
+        /* Style untuk UI dalam game */
         .box {
             background-color: #2a2a2a;
             padding: 30px;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            max-width: 80%;
         }
     </style>
 </head>
 <body>
 
-    <div class="box" id="main-content">
-        <h2 style="color: #4caf50;">Landscape Asli Telegram 🖥️</h2>
-        <p>Halo, <span id="username" style="color: #64b5f6; font-weight: bold;">Loading...</span>!</p>
-        <p style="font-size: 14px; color: #aaa;">Ini menggunakan API Mini Apps 2.0 yang sah.</p>
+    <div id="game-container">
+        <div class="box">
+            <h2 style="color: #4caf50;">Landscape Anti-Gagal 🖥️</h2>
+            <p>Halo, <span id="username" style="color: #64b5f6; font-weight: bold;">Loading...</span>!</p>
+            <p style="font-size: 14px; color: #aaa;">Meskipun Auto-Rotate HP kamu dimatikan, tulisan ini bakal maksa kamu buat miringin HP!</p>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-
-        // 1. Beritahu Telegram kalau aplikasi sudah siap
         tg.ready();
 
-        // 2. Minta Telegram masuk ke mode Layar Penuh (Fullscreen)
-        // Ini yang membuat jendela di Telegram PC langsung melebar
+        // 1. Tetap panggil ini agar tampilannya full (menghilangkan border atas-bawah)
         if (tg.requestFullscreen) {
             tg.requestFullscreen();
         }
-
-        // 3. KUNCI orientasi ke Landscape
-        // Ini API valid Telegram yang memaksa HP langsung miring
-        if (tg.lockOrientation) {
-            tg.lockOrientation('landscape');
-        }
-
-        // Tampilkan nama user
-        const user = tg.initDataUnsafe?.user;
-        if (user) {
-            document.getElementById('username').innerText = user.first_name;
-        } else {
-            document.getElementById('username').innerText = "Player";
-        }
-    </script>
-</body>
-</html>
+        
+        // 2. Kita tetap panggil lockOrientation. 
+        // Ini fungsinya

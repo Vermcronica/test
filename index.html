@@ -23,6 +23,7 @@
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            max-width: 80%;
         }
         button {
             background-color: #2481cc;
@@ -34,32 +35,58 @@
             font-weight: bold;
             margin-top: 15px;
         }
+        /* Style untuk layar blokir */
+        .error-text {
+            color: #ef5350;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <div class="box">
+    <div class="box" id="main-content" style="display: none;">
         <h2>Ujicoba Mini App 🚀</h2>
         <p>Halo, <span id="username" style="color: #64b5f6; font-weight: bold;">Loading...</span>!</p>
         <button onclick="testKlik()">Coba Klik Aku</button>
     </div>
 
-    <script>
-        // Beritahu Telegram kalau Mini App sudah siap ditampilkan
-        window.Telegram.WebApp.ready();
+    <div class="box" id="block-screen" style="display: none;">
+        <h2 class="error-text">Akses Ditolak! ❌</h2>
+        <p>Game ini cuma bisa dimainkan di dalam **Telegram Mini App**.</p>
+        <p style="font-size: 13px; color: #aaa;">Silakan buka bot resmi kamu di aplikasi Telegram.</p>
+    </div>
 
-        // Mengambil data user yang sedang membuka bot
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+    <script>
+        // Ambil data inisialisasi dari Telegram
+        const tg = window.Telegram.WebApp;
         
-        if (user) {
-            document.getElementById('username').innerText = user.first_name;
+        // Cek apakah aplikasi dibuka di dalam lingkungan Telegram yang valid
+        // Jika dibuka di browser biasa, tg.initData akan berupa string kosong ""
+        if (tg.initData && tg.initData !== "") {
+            
+            // 1. Beritahu Telegram kalau web sudah siap
+            tg.ready();
+            
+            // 2. Munculkan konten utama game
+            document.getElementById('main-content').style.display = 'block';
+            
+            // 3. Ambil data user Telegram
+            const user = tg.initDataUnsafe?.user;
+            if (user) {
+                document.getElementById('username').innerText = user.first_name;
+            } else {
+                document.getElementById('username').innerText = "User Telegram";
+            }
+
         } else {
-            document.getElementById('username').innerText = "User Luar Telegram";
+            // Jika dibuka di luar Telegram (Chrome, Safari, PC Browser biasa)
+            // Tampilkan layar blokir, sembunyikan game
+            document.getElementById('block-screen').style.display = 'block';
         }
 
-        // Fungsi tombol ketika diklik
+        // Fungsi tombol bawaan
         function testKlik() {
-            window.Telegram.WebApp.showAlert("Kodenya jalan jir! Mini App sukses tersambung.");
+            tg.showAlert("Kodenya jalan jir! Mini App sukses tersambung.");
         }
     </script>
 </body>

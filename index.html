@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ujicoba Mini App Haikha</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Ujicoba Mini App Landscape</title>
+    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
     <style>
         body {
             background-color: #1a1a1a;
@@ -16,61 +16,85 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
         .box {
             background-color: #2a2a2a;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             max-width: 80%;
         }
         button {
             background-color: #2481cc;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             margin-top: 15px;
+            font-size: 16px;
+            transition: background 0.2s;
         }
-        /* Style untuk layar blokir */
+        button:hover {
+            background-color: #1c6da3;
+        }
         .error-text {
             color: #ef5350;
             font-weight: bold;
+        }
+        .status-badge {
+            background-color: #388e3c;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
     <div class="box" id="main-content" style="display: none;">
-        <h2>Ujicoba Mini App 🚀</h2>
+        <div class="status-badge">Mode Landscape Aktif 🖥️</div>
+        <h2>Utopia Gacha Test</h2>
         <p>Halo, <span id="username" style="color: #64b5f6; font-weight: bold;">Loading...</span>!</p>
+        <p style="font-size: 14px; color: #aaa;">Jendela ini otomatis melebar secara horizontal di PC.</p>
         <button onclick="testKlik()">Coba Klik Aku</button>
     </div>
 
     <div class="box" id="block-screen" style="display: none;">
         <h2 class="error-text">Akses Ditolak! ❌</h2>
         <p>Game ini cuma bisa dimainkan di dalam **Telegram Mini App**.</p>
-        <p style="font-size: 13px; color: #aaa;">Silakan buka bot resmi kamu di aplikasi Telegram.</p>
+        <p style="font-size: 13px; color: #aaa;">Silakan buka bot resmi kamu melalui aplikasi Telegram HP atau Desktop.</p>
     </div>
 
     <script>
-        // Ambil data inisialisasi dari Telegram
+        // Inisialisasi API Telegram WebApp
         const tg = window.Telegram.WebApp;
         
-        // Cek apakah aplikasi dibuka di dalam lingkungan Telegram yang valid
-        // Jika dibuka di browser biasa, tg.initData akan berupa string kosong ""
+        // Cek validasi lingkungan Telegram via initData
         if (tg.initData && tg.initData !== "") {
             
-            // 1. Beritahu Telegram kalau web sudah siap
+            // 1. Beritahu Telegram kalau aplikasi siap di-render
             tg.ready();
             
-            // 2. Munculkan konten utama game
+            // 2. Paksa masuk ke mode Fullscreen agar jendela Desktop langsung melebar lebar ke samping
+            if (tg.requestFullscreen) {
+                tg.requestFullscreen();
+            }
+
+            // 3. Kunci orientasi ke Landscape (Memaksa HP berputar miring)
+            if (tg.requestOrientation) {
+                tg.requestOrientation('landscape');
+            }
+            
+            // 4. Tampilkan area game utama
             document.getElementById('main-content').style.display = 'block';
             
-            // 3. Ambil data user Telegram
+            // 5. Ambil data nama user Telegram
             const user = tg.initDataUnsafe?.user;
             if (user) {
                 document.getElementById('username').innerText = user.first_name;
@@ -79,15 +103,10 @@
             }
 
         } else {
-            // Jika dibuka di luar Telegram (Chrome, Safari, PC Browser biasa)
-            // Tampilkan layar blokir, sembunyikan game
+            // Jika dibuka di Chrome/Safari biasa di luar Telegram, langsung blokir
             document.getElementById('block-screen').style.display = 'block';
         }
 
-        // Fungsi tombol bawaan
+        // Fungsi ketika tombol di dalam Mini App diklik
         function testKlik() {
-            tg.showAlert("Kodenya jalan jir! Mini App sukses tersambung.");
-        }
-    </script>
-</body>
-</html>
+            tg.showAlert("Koden

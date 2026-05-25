@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utopia Gacha Test</title>
-    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
+    <title>Utopia Gacha Test (Real Landscape)</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             background-color: #1a1a1a;
@@ -24,87 +24,41 @@
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            max-width: 80%;
-        }
-        button {
-            background-color: #2481cc;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 15px;
-            font-size: 16px;
-        }
-        button.start-btn {
-            background-color: #4caf50;
-            font-size: 18px;
-            padding: 15px 35px;
-        }
-        .error-text {
-            color: #ef5350;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="box" id="start-screen" style="display: none;">
-        <h2>Utopia Gacha Test 🚀</h2>
-        <p>Halo, <span id="welcome-name" style="color: #64b5f6; font-weight: bold;">Loading...</span>!</p>
-        <p style="font-size: 14px; color: #aaa;">Klik tombol di bawah untuk mengaktifkan mode layar horizontal.</p>
-        <button class="start-btn" onclick="masukGame()">MASUK GAME 🎮</button>
-    </div>
-
-    <div class="box" id="game-screen" style="display: none;">
-        <h3 style="color: #4caf50;">Mode Landscape Berhasil! 🖥️</h3>
-        <p>Nah, sekarang harusnya jendela Telegram Desktop-mu sudah melebar ke samping.</p>
-        <button onclick="testKlik()">Coba Fitur Pop-up</button>
-    </div>
-
-    <div class="box" id="block-screen" style="display: none;">
-        <h2 class="error-text">Akses Ditolak! ❌</h2>
-        <p>Game ini cuma bisa dimainkan di dalam **Telegram Mini App**.</p>
+    <div class="box" id="main-content">
+        <h2 style="color: #4caf50;">Landscape Asli Telegram 🖥️</h2>
+        <p>Halo, <span id="username" style="color: #64b5f6; font-weight: bold;">Loading...</span>!</p>
+        <p style="font-size: 14px; color: #aaa;">Ini menggunakan API Mini Apps 2.0 yang sah.</p>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        
-        // Proteksi luar Telegram
-        if (tg.initData && tg.initData !== "") {
-            tg.ready();
-            
-            // Tampilkan halaman START dulu
-            document.getElementById('start-screen').style.display = 'block';
-            
-            const user = tg.initDataUnsafe?.user;
-            if (user) {
-                document.getElementById('welcome-name').innerText = user.first_name;
-            } else {
-                document.getElementById('welcome-name').innerText = "User Telegram";
-            }
+
+        // 1. Beritahu Telegram kalau aplikasi sudah siap
+        tg.ready();
+
+        // 2. Minta Telegram masuk ke mode Layar Penuh (Fullscreen)
+        // Ini yang membuat jendela di Telegram PC langsung melebar
+        if (tg.requestFullscreen) {
+            tg.requestFullscreen();
+        }
+
+        // 3. KUNCI orientasi ke Landscape
+        // Ini API valid Telegram yang memaksa HP langsung miring
+        if (tg.lockOrientation) {
+            tg.lockOrientation('landscape');
+        }
+
+        // Tampilkan nama user
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById('username').innerText = user.first_name;
         } else {
-            document.getElementById('block-screen').style.display = 'block';
-        }
-
-        // FUNGSI UTAMA UNTUK MEMAKSA LANDSCAPE (Dicuat lewat interaksi user)
-        function masukGame() {
-            // Sembunyikan layar start, munculkan layar game
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-
-            // Eksekusi paksa perluasan layar setelah ada klik dari user
-            if (tg.requestFullscreen) {
-                tg.requestFullscreen();
-            }
-            if (tg.requestOrientation) {
-                tg.requestOrientation('landscape');
-            }
-        }
-
-        function testKlik() {
-            tg.showAlert("Kodenya aman jir! Sudah merespon.");
+            document.getElementById('username').innerText = "Player";
         }
     </script>
 </body>
